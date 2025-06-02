@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sherlock WebApp</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    button {
+      padding: 1rem;
+      margin: 0.5rem;
+      border: none;
+      background: #4a90e2;
+      color: white;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background: #357bd8;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🕵️ Шерлок: Гра-Розслідування</h2>
+    <div id="game">
+      <p id="question">Натисни "Почати" щоб розпочати справу</p>
+      <div id="answers"></div>
+      <button onclick="startGame()">Почати</button>
+    </div>
+  </div>
+
+  <script>
+    const levels = [
+      {
+        q: "🔍 Рівень 1: Ти в холі готелю. Що робиш?",
+        a: [
+          "Оглянути місце злочину",
+          "Поговорити з менеджером",
+          "Перевірити камери"
+        ],
+        correct: "Оглянути місце злочину"
+      },
+      {
+        q: "👤 Рівень 2: Троє підозрюваних. Кого допитати?",
+        a: ["Опитати покоївку", "Опитати водія", "Опитати бізнес-партнера"],
+        correct: ["Опитати бізнес-партнера", "Опитати водія"]
+      },
+      {
+        q: "📱 Рівень 3: Ти знаходиш предмет. Що це?",
+        a: ["Закривавлений ніж", "Зламаний телефон", "Рукавичка без пальця"],
+        correct: "Зламаний телефон"
+      },
+      {
+        q: "📚 Рівень 4: Доступ до бази готелю. Що перевірити?",
+        a: ["Перевірити бронювання кімнат", "Перевірити персонал", "Перевірити вхідні дзвінки"],
+        correct: "Перевірити бронювання кімнат"
+      },
+      {
+        q: "⚖️ Рівень 5: Хто винний?",
+        a: ["Покоївка", "Водій", "Бізнес-партнер"],
+        correct: "Бізнес-партнер"
+      }
+    ];
+
+    let level = 0;
+    let score = 0;
+
+    function startGame() {
+      level = 0;
+      score = 0;
+      showLevel();
+    }
+
+    function showLevel() {
+      if (level >= levels.length) {
+        showResult();
+        return;
+      }
+      const lvl = levels[level];
+      document.getElementById("question").textContent = lvl.q;
+      const answersDiv = document.getElementById("answers");
+      answersDiv.innerHTML = "";
+      lvl.a.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = () => handleAnswer(option);
+        answersDiv.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(answer) {
+      const lvl = levels[level];
+      const correct = Array.isArray(lvl.correct) ? lvl.correct : [lvl.correct];
+      if (correct.includes(answer)) score++;
+      level++;
+      showLevel();
+    }
+
+    function showResult() {
+      let message = "";
+      if (score === 5) message = "🔥 Ти розкрив справу і став героєм!";
+      else if (score === 4) message = "✅ Ти викрив злочинця, але без повного набору доказів.";
+      else if (score === 3) message = "⚠️ Ти майже все зібрав, але злочинець уникнув покарання.";
+      else if (score >= 1) message = "❌ Ти припустився помилок. Суд виправдав підозрюваного.";
+      else message = "💀 Ти не розкрив справу. Злочинець утік...";
+      document.getElementById("question").textContent = message;
+      document.getElementById("answers").innerHTML = `<button onclick="startGame()">🔁 Почати знову</button>`;
+    }
+  </script>
+</body>
+</html>
